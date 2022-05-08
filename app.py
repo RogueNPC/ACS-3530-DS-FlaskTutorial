@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from scipy.misc import imsave, imread, imresize
+import imageio
 import numpy as np
 import keras.models
 import re
@@ -7,7 +7,7 @@ import sys
 import os
 import base64
 sys.path.append(os.path.abspath("./model"))
-from load import * 
+from model.load import *
 
 
 global graph, model
@@ -30,10 +30,10 @@ def convertImage(imgData1):
 def predict():
 	imgData = request.get_data()
 	convertImage(imgData)
-	x = imread('output.png',mode='L')
+	x = imageio.imread('output.png',mode='L')
 	x = np.invert(x)
-	x = imresize(x,(28,28))
-	x = x.reshape(1,28,28,1)
+	x = np.resize(x,(28,28))
+	x = x.reshape(x, (1,28,28,1))
 
 	with graph.as_default():
 		out = model.predict(x)
